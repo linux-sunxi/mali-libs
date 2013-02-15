@@ -114,8 +114,15 @@ main(int argc, char *argv[])
 		return -1;
 	}
 
-	if (!eglInitialize(display, &egl_major, &egl_minor)) {
-		fprintf(stderr, "Error: eglInitialise failed!\n");
+	if (eglInitialize(display, &egl_major, &egl_minor) == EGL_FALSE) {
+		GLuint r;
+		r = eglGetError();
+		if (r == EGL_NOT_INITIALIZED)
+			fprintf(stderr, "Error: eglInitialise failed: %s\n", "EGL_NOT_INITIALIZED");
+		else if (r == EGL_BAD_DISPLAY)
+			fprintf(stderr, "Error: eglInitialise failed: %s\n", "EGL_BAD_DISPLAY");
+		else
+			fprintf(stderr, "Error: eglInitialise failed: 0x%x\n", r);
 		return -1;
 	}
 
